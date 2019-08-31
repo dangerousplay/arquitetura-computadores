@@ -14,28 +14,45 @@
    size: .word 5
    comuns: .word 0
 .text
-         li $a0, 0 # Atribui o valor 0 ao registrador
-         li $t0, 0 # Atribui o valor 0 ao registrador
-         la $s1,V1 # Carrega o endereço de V1 para o registrador
-         la $s2,V2 # Carrega o endereço de V2 para o registrador
-         la $s3,V3 # Carrega o endereço de V3 para o registrador
-         la $s4,comuns
-         li $s5, 0
-   forsum:    # Define o loop do FOR
-         bge $s0, 5, end_forsum  # Verifica o número de iterações realizadas, pulando quando tiver feito 5 iterações
-         lw $t1,($s1) # Carrega o valor atual da memória
-         lw $t2,($s2) # Carrega o valor atual da memória
-         beq $t1, $t2, add_comum
-         j increment_for
-   add_comum:
-         sw $t1, ($s3) # Move para a memória o valor do registrador
-         addi $s5,$s5, 1 # Incrementa o número de elementos comuns
-         j increment_for
-   increment_for:
-         addi $s0,$s0,1 # Incrementa o índice do FOR
-         addi $s1,$s1,4 # Incrementa o offset do ponteiro
-         addi $s2,$s2,4 # Incrementa o offset do ponteiro
-         addi $s3,$s3,4 # Incrementa o offset do ponteiro
-         j forsum #Retorna ao bloco FORSUM
-   end_forsum:
-         sw $s5, ($s4) # Move para a memória o valor do registrador
+         la $s0,V1 # Carrega o endereço de V1 para o registrador
+         la $s1,V2 # Carrega o endereço de V2 para o registrador
+         la $s2,V3 # Carrega o endereço de V3 para o registrador
+         move $s3, $s1 #Registrador para iterar v2
+         la $t1, comuns # Carregando o valor que está em comuns
+         lw $t1, ($t1)
+         la $t2, size # Carregando o valor que está em size
+         lw $t2, ($t2)
+         li $t3, 0 #inicializando com zero
+         li $t4, 0 #inicializando com zero
+         li $t5, 0 #inicializando com zero
+main_for:
+	bge $t3, $t2, end_main_for # Encerra o loop quando terminar as iterações
+	lw $a0, ($s0) # carrega o argumento para a chamada
+	jal for_find_comum # Chama o bloco para procurar os números na lista
+	addi $t3, $t3, 1 # incrementa o for do loop
+	addi $s0, $s0, 4 # Incrementa o item a ser pegado do vetor
+	move $t4, $zero # zera o elemento de iteração
+	move $s3, $s1 # Zera o ponteiro para o segundo vetor
+	j main_for # retorna ao loop
+
+for_find_comum:
+	bge $t4, $t2, return_main_loop # Encerra o loop quando terminar as iterações
+	lw $a1, ($s3) # Carrega o valor do segundo vetor
+	beq $a1, $a0, add_comum # se forem iguais, adiciona ao vetor 3
+	j increment_for_find # incremeta o for
+
+return_main_loop:
+	jr $ra # Volta ao bloco que foi chamado
+
+increment_for_find:
+	addi $t4, $t4, 1 # Incrementando as iterações realizadas
+	addi $s3, $s3, 4 # Incrementando ponteiro para o vetor 2
+	j for_find_comum # retorna ao loop
+
+add_comum:
+	sw $a1, ($s2) # Guarda na array o valor comum
+	addi $s2, $s2, 4 # Incrementa o ponteiro
+	addi $t1, $t1, 1 # incrementa o número de elementos encontrados
+	j increment_for_find # incrementa o loop
+
+end_main_for:
