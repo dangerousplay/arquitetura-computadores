@@ -1,4 +1,4 @@
-#Exercício 4: Implemente um algoritmo de divisão de 10 por 3 usando subtrações
+# Exercício 4: Implemente um algoritmo de divisão de 10 por 3 usando subtrações
 # sucessivas.
 # [Dividendo] [Divisor] [Dividendo-Divisor] Contador
 # 10 3 7 1
