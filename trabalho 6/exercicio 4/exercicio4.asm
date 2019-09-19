@@ -19,7 +19,7 @@
 #result: .word 0
 
 .data
-n: .word 2
+n: .word 10
 result: .word 0
 
 .text
